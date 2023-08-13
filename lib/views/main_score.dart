@@ -1,3 +1,5 @@
+import 'package:cric_score/components/mongo_connect.dart';
+import 'package:cric_score/models/player_score.dart';
 import 'package:cric_score/views/constant.dart';
 import 'package:flutter/material.dart';
 
@@ -18,11 +20,23 @@ class _MainScoreState extends State<MainScore> {
   int non_stricker_run = 0;
   int total_run = 0;
   int out = 0;
+  String stric = "";
+  String non_stric = "";
+  String bowl = "";
   bool isStricker = true;
   List<int> balls = [];
   @override
+  void initState() {
+    super.initState();
+    stric = widget.stricker;
+    non_stric = widget.non_stricker;
+    bowl = widget.bowler;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: GestureDetector(
             onTap: () {
@@ -103,38 +117,123 @@ class _MainScoreState extends State<MainScore> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                Visibility(
-                                  visible: isStricker,
-                                  child: Text(
-                                    '*',
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          child: Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Visibility(
+                                    visible: isStricker,
+                                    child: Text(
+                                      '*',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.grey.shade900),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${stric}:',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.grey.shade900),
+                                        fontSize: 16,
+                                        color: Colors.grey.shade600),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text(
+                                '$stricker_run',
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.grey.shade900),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () async {
+                              var Ball = TextEditingController();
+                              Dialog optionDialog = Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0)), //this right here
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                  ),
+                                  height: 240.0,
+                                  width: 300.0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        TextFormField(
+                                          controller: Ball,
+                                          decoration: InputDecoration(
+                                            hintText: 'Extra Run',
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Palette.primary),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            setState(() {
+                                              stricker_run +=
+                                                  int.parse(Ball.text);
+                                              total_run +=
+                                                  int.parse(Ball.text) + 1;
+                                            });
+
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              color: Palette.primary,
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12),
+                                                child: Text(
+                                                  'Add',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  '${widget.stricker}:',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey.shade600),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Text(
-                              '$stricker_run',
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.grey.shade900),
-                            ),
-                          ],
-                        ),
-                        GestureDetector(child: Icon(Icons.add)),
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      optionDialog);
+                            },
+                            child: Icon(Icons.add)),
                       ],
                     ),
                     SizedBox(
@@ -143,38 +242,123 @@ class _MainScoreState extends State<MainScore> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Row(
-                              children: [
-                                Visibility(
-                                  visible: !isStricker,
-                                  child: Text(
-                                    '*',
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          child: Row(
+                            children: [
+                              Row(
+                                children: [
+                                  Visibility(
+                                    visible: !isStricker,
+                                    child: Text(
+                                      '*',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.grey.shade900),
+                                    ),
+                                  ),
+                                  Text(
+                                    '${non_stric}:',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.grey.shade900),
+                                        fontSize: 16,
+                                        color: Colors.grey.shade600),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                width: 16,
+                              ),
+                              Text(
+                                '${non_stricker_run}',
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.grey.shade900),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () async {
+                              var Ball = TextEditingController();
+                              Dialog optionDialog = Dialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        8.0)), //this right here
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                  ),
+                                  height: 240.0,
+                                  width: 300.0,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        TextFormField(
+                                          controller: Ball,
+                                          decoration: InputDecoration(
+                                            hintText: 'Extra Run',
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Palette.primary),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 16,
+                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            setState(() {
+                                              non_stricker_run +=
+                                                  int.parse(Ball.text);
+                                              total_run +=
+                                                  int.parse(Ball.text) + 1;
+                                            });
+
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                              color: Palette.primary,
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12),
+                                                child: Text(
+                                                  'Add',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  '${widget.non_stricker}:',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey.shade600),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              width: 16,
-                            ),
-                            Text(
-                              '$non_stricker_run',
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.grey.shade900),
-                            ),
-                          ],
-                        ),
-                        GestureDetector(child: Icon(Icons.add)),
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      optionDialog);
+                            },
+                            child: Icon(Icons.add)),
                       ],
                     ),
                     SizedBox(
@@ -198,7 +382,7 @@ class _MainScoreState extends State<MainScore> {
                         Row(
                           children: [
                             Text(
-                              '${widget.bowler}:',
+                              '${bowl}:',
                               style: TextStyle(
                                   fontSize: 16, color: Colors.grey.shade600),
                             ),
@@ -207,7 +391,7 @@ class _MainScoreState extends State<MainScore> {
                             ),
                             SizedBox(
                               height: 30,
-                              width: MediaQuery.of(context).size.width * 0.60,
+                              width: MediaQuery.of(context).size.width * 0.44,
                               child: (balls.length > 0)
                                   ? ListView.builder(
                                       scrollDirection: Axis.horizontal,
@@ -426,82 +610,91 @@ class _MainScoreState extends State<MainScore> {
                                                   ),
                                                 ),
                                               ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    total_run += 1;
-                                                  });
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  height: 57,
-                                                  width: 57,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
-                                                    border: Border.all(
-                                                      color: Palette.primary,
-                                                    ),
-                                                  ),
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              12),
-                                                      child: Text(
-                                                        'Extra',
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              Palette.primary,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         ),
                                         SizedBox(
                                           height: 12,
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              balls.add(0);
-                                              total_run += 0;
-                                            });
-                                            Navigator.pop(context);
-                                          },
-                                          child: Container(
-                                            height: 57,
-                                            width: 57,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: Palette.primary,
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12),
-                                                child: Text(
-                                                  '0',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  balls.add(0);
+                                                  total_run += 0;
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              child: Container(
+                                                height: 57,
+                                                width: 57,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  border: Border.all(
                                                     color: Palette.primary,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12),
+                                                    child: Text(
+                                                      '0',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Palette.primary,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  total_run += 1;
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                              child: Container(
+                                                height: 57,
+                                                width: 57,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  border: Border.all(
+                                                    color: Palette.primary,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            12),
+                                                    child: Text(
+                                                      'Wd',
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Palette.primary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -514,6 +707,122 @@ class _MainScoreState extends State<MainScore> {
                                       optionDialog);
                             },
                             child: Icon(Icons.add)),
+                        GestureDetector(
+                          onTap: () async {
+                            out += 1;
+                            balls.add(0);
+                            await MongoDB.wicket(
+                                'Team_A',
+                                (isStricker) ? stric : non_stric,
+                                (isStricker) ? stricker_run : non_stricker_run);
+
+                            var Bat1 = TextEditingController();
+                            Dialog optionDialog = Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      8.0)), //this right here
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.white,
+                                ),
+                                height: 240.0,
+                                width: 300.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      TextFormField(
+                                        controller: Bat1,
+                                        decoration: InputDecoration(
+                                          hintText: 'Players Name',
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Palette.primary),
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 16,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          if (isStricker) {
+                                            setState(() {
+                                              stric = Bat1.text;
+                                              stricker_run = 0;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              non_stric = Bat1.text;
+                                              non_stricker_run = 0;
+                                            });
+                                          }
+                                          final data1 = PlayerScore(
+                                              playerName: Bat1.text,
+                                              playerScore: 0,
+                                              isOut: false);
+                                          await MongoDB.addPlayer(
+                                              data1, 'Team_A');
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            color: Palette.primary,
+                                          ),
+                                          child: Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              child: Text(
+                                                'Set',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    optionDialog);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Palette.primary,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6),
+                              child: Text(
+                                'W',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -556,7 +865,81 @@ class _MainScoreState extends State<MainScore> {
               height: 30,
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () async {
+                var Ball = TextEditingController();
+                Dialog optionDialog = Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(8.0)), //this right here
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                    ),
+                    height: 240.0,
+                    width: 300.0,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                            controller: Ball,
+                            decoration: InputDecoration(
+                              hintText: 'Bowler Name',
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(color: Palette.primary),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              setState(() {
+                                balls.clear();
+                                bowl = Ball.text;
+                              });
+                              final data1 = PlayerScore(
+                                  playerName: Ball.text,
+                                  playerScore: 0,
+                                  isOut: false);
+                              await MongoDB.addPlayer(data1, 'Team_B');
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color: Palette.primary,
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  child: Text(
+                                    'Set',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => optionDialog);
+              },
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),

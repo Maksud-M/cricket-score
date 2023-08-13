@@ -51,4 +51,14 @@ class MongoDB {
   //     return;
   //   }
   // }
+  static Future<void> wicket(String team, String name, int value) async {
+    try {
+      await db.collection(team).updateOne(
+        {"player_name": name},
+        modify.set("player_score", value).set("isOut", true),
+      );
+    } catch (e) {
+      return;
+    }
+  }
 }
