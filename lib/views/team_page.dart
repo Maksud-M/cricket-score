@@ -1,6 +1,7 @@
 import 'package:cric_score/models/matches_model.dart';
 import 'package:cric_score/views/add_player.dart';
 import 'package:cric_score/views/constant.dart';
+import 'package:cric_score/views/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:cric_score/components/mongo_connect.dart';
 import 'package:cric_score/models/matches_model.dart';
@@ -117,16 +118,17 @@ class _TeamPageState extends State<TeamPage> {
                   border: OutlineInputBorder(
                     borderSide: BorderSide(color: Palette.primary),
                     borderRadius: BorderRadius.circular(4),
-                  )
-              ),
+                  )),
             ),
-
             SizedBox(
               height: 40,
             ),
             GestureDetector(
-              onTap: () async{
-                await _insertMatch(teamA.text,teamB.text,int.parse(numberOfPlayers.text),int.parse(overs.text));
+              onTap: () async {
+                await _insertMatch(teamA.text, teamB.text,
+                    int.parse(numberOfPlayers.text), int.parse(overs.text));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()));
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -152,10 +154,15 @@ class _TeamPageState extends State<TeamPage> {
       ),
     );
   }
-  Future<void> _insertMatch(String teamA, String teamB, int numberOfPlayers, int overs) async{
-    final data = Matches(teamA: teamA,teamB: teamB,playersPerTeam: numberOfPlayers,overs: overs);
+
+  Future<void> _insertMatch(
+      String teamA, String teamB, int numberOfPlayers, int overs) async {
+    final data = Matches(
+        teamA: teamA,
+        teamB: teamB,
+        playersPerTeam: numberOfPlayers,
+        overs: overs);
     await MongoDB.createMatch(data);
     print("data added");
   }
 }
-
